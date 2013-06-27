@@ -96,6 +96,12 @@ Gstorm is just few days old and few groovy lines long. There is long list of ite
 
 ## Changelog :
 
+### v0.4
+ - support primitive numbers (int/long)
+ - Support table name to be different from the class name. Class can be annotated with @Table("TABLE_NAME") to specify table name.
+ - support date/time to be stored.
+ - internal refactoring
+
 ### v0.3
  - `enableQueryLogging` to enable sql query logging
  - `get()` to load a model by id
