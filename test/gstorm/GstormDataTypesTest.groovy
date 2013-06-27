@@ -1,6 +1,7 @@
 package gstorm
 
 import groovy.sql.Sql
+
 import java.text.SimpleDateFormat
 import java.util.logging.Level
 
@@ -14,11 +15,19 @@ class GstormDataTypesTest extends GroovyTestCase {
         Date dateOfBirth
     }
 
+    class ClassWithNumbers {
+        String name
+        int age
+        long points
+        float percentage
+    }
+
     void setUp() {
         sql = Sql.newInstance("jdbc:hsqldb:mem:database", "sa", "", "org.hsqldb.jdbc.JDBCDriver")
         gstorm = new Gstorm(sql)
         gstorm.enableQueryLogging(Level.INFO)
         gstorm.stormify(ClassWithDates)
+        gstorm.stormify(ClassWithNumbers)
         df = new SimpleDateFormat("d/M/yyyy")
     }
 
@@ -39,6 +48,24 @@ class GstormDataTypesTest extends GroovyTestCase {
         cwd.save()
 
         assert ClassWithDates.get(cwd.id).dateOfBirth == df.parse("20/11/2011")
+    }
+
+    void "test if Numbers can be saved"() {
+        def cwn = new ClassWithNumbers(name: "test", age: 1, percentage: 10.23, points: 123456789098765).save()
+
+        final age = ClassWithNumbers.get(cwn.id).age
+        println age.class
+        assert age instanceof Integer
+    }
+
+    void "test if Numbers can be updated"() {
+        def cwn = new ClassWithNumbers(name: "test", age: 1, percentage: 10.23, points: 123456789098765).save()
+        cwn.age = 12
+        cwn.percentage = -11.22345
+        cwn.points = 98765431123456789
+
+
+        assert ClassWithDates.get(cwn.id).dateOfBirth == df.parse("20/11/2011")
     }
 
 }
